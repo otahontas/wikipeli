@@ -5,6 +5,7 @@ from collections import deque
 import json
 
 app = Flask(__name__)
+CORS(app)
 app.config["DEBUG"] = True
 
 @app.route('/<start>', methods=['GET'])
@@ -20,6 +21,7 @@ def find_shortest_path(start):
 
     while articles:
         article = articles.popleft()
+        print("Handling article: " + article)
         if article == goal:
             break
         for link in get_links(article):

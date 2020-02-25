@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import loader from './fading-loader.svg'
 import './App.css'
 
 const InputForm = ({handleClick, article, handleInput}) => (
@@ -22,11 +23,12 @@ const Result = ({ results }) => {
 
   return (
     <div>
-      <ul>
+      <p>Artikkelit järjestyksessä:</p>
+      <ol>
       {results.map(r =>
       <li key={r}><a href={`https://fi.wikipedia.org/wiki/${r}`}>{r}</a></li>
       )}
-      </ul>
+      </ol>
     </div>
   )
 }
@@ -38,6 +40,7 @@ const Timer = ({timer}) => {
     return (
       <div>
         <p>Tässä todennäköisesti kestää muutama tovi.</p>
+        <img src={loader} className="Loading" alt="loading spinner" /> 
       </div>
     )
 }
@@ -48,8 +51,11 @@ const App = () => {
   const [ timer, setTimer ] = useState(false)
 
   const getResults = async () => {
-    let result = await axios.get(`http://localhost:5000/${article}`)
+    setTimer(true)
+    const result = await axios.get(`http://localhost:5000/${article}`)
+    console.log(result.data)
     setResults(result.data)
+    setTimer(false)
   }
 
   const handleInput = (event) => {
@@ -62,15 +68,17 @@ const App = () => {
   }
     
   return (
-    <div>
-      <h1>Wikipeli</h1>
-      <p>Anna Wikipedia-artikkelin nimi (esimerkiksi Helsinki) ja Wikipeli löytää nopeimman reitin antamastasi artikkelista <a href="https://fi.wikipedia.org/wiki/Jeesus">Jeesus-artikkeliin</a>.</p>
-    <InputForm 
-      handleClick={ handleClick }
-      article={ article }
-      handleInput={ handleInput } />
-    <Result results={ results } />
-    <Timer timer={ timer } />
+    <div className="App">
+      <header className="App-header">
+        <h1>Wikipeli</h1>
+        <p>Anna Wikipedia-artikkelin nimi (esimerkiksi Helsinki) ja Wikipeli löytää nopeimman reitin antamastasi artikkelista <a href="https://fi.wikipedia.org/wiki/Jeesus">Jeesus-artikkeliin</a>.</p>
+        <InputForm 
+          handleClick={ handleClick }
+          article={ article }
+          handleInput={ handleInput } />
+        <Result results={ results } />
+        <Timer timer={ timer } />
+      </header>
     </div>
   )
 }

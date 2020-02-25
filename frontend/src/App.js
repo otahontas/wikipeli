@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import './App.css'
 
 const InputForm = ({handleClick, article, handleInput}) => (
   <div>
@@ -15,27 +16,40 @@ const InputForm = ({handleClick, article, handleInput}) => (
   </div>
 )
 
-const parseNeighborData = (data) => {
-  var pageid = Object.keys(data['query']['pages'])[0]
-  var links = data['query']['pages'][pageid]['links']
-  return links.map(link => link.title)
+const Result = ({ results }) => {
+  if (results.length === 0) 
+    return <div></div>
+
+  return (
+    <div>
+      <ul>
+      {results.map(r =>
+      <li key={r}><a href={`https://fi.wikipedia.org/wiki/${r}`}>{r}</a></li>
+      )}
+      </ul>
+    </div>
+  )
 }
 
-const getNeighbors = async (node) => {
-  const URL_BASE = "https://fi.wikipedia.org/w/api.php?"
-  const URL_PARAMS = "action=query&prop=links&pllimit=100&format=json&origin=*"
-  const response = await axios.get(`${URL_BASE}${URL_PARAMS}&titles=${node}`)
-  const neighbors = parseNeighborData(response.data)
-  console.log(neighbors)
+const Timer = ({timer}) => {
+  if (!timer)
+    return <div></div>
+
+    return (
+      <div>
+        <p>Tässä todennäköisesti kestää muutama tovi.</p>
+      </div>
+    )
 }
 
 const App = () => {
   const [ article, setArticle ] = useState('')
-  const [ result, setResult ] = useState([])
-  var neighbors = []
+  const [ results, setResults ] = useState([])
+  const [ timer, setTimer ] = useState(false)
 
-  const search = () => {
-    getNeighbors("Hanau")
+  const getResults = async () => {
+    let result = await axios.get(`http://localhost:5000/${article}`)
+    setResults(result.data)
   }
 
   const handleInput = (event) => {
@@ -44,9 +58,7 @@ const App = () => {
 
   const handleClick = (event) => {
     event.preventDefault()
-    search();
-    var res = ['Hanau','Suomi']
-    setResult(result.concat(res))
+    getResults()
   }
     
   return (
@@ -57,6 +69,8 @@ const App = () => {
       handleClick={ handleClick }
       article={ article }
       handleInput={ handleInput } />
+    <Result results={ results } />
+    <Timer timer={ timer } />
     </div>
   )
 }

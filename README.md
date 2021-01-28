@@ -1,5 +1,7 @@
 # Wikipeli
 
+[Not maintained]. Simple React/python -app for finding shortest route between two Wikipedia articles. Other info in Finnish:
+
 Wikipeli on simppeli React / Python -appi, jonka avulla voi etsiä nopeimman reitin jostain artikkelista Jeesus-artikkeliin. Peli on tuttu yläasteelta.
 
 ## Tekniset tiedot ja asennus
